@@ -1,0 +1,45 @@
+{
+  "name": "create-riot",
+  "version": "0.0.0",
+  "description": "Riot.js Components and Projects scaffolder",
+  "main": "index.js",
+  "module": "src/index.js",
+  "dependencies": {
+    "esm": "^3.2.25"
+  },
+  "files": [
+    "src",
+    "index.js"
+  ],
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "coveralls": "^3.1.0",
+    "eslint": "^7.3.0",
+    "eslint-config-riot": "^3.0.0",
+    "mocha": "^8.0.1",
+    "nyc": "^15.1.0"
+  },
+  "scripts": {
+    "cov": "nyc report --reporter=text-lcov | coveralls",
+    "cov-html": "nyc report --reporter=html",
+    "lint": "eslint src test",
+    "test": "npm run lint && nyc --require esm mocha test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/riot/create-riot.git"
+  },
+  "keywords": [
+    "riot",
+    "riotjs",
+    "components",
+    "webcomponents",
+    "scaffolder"
+  ],
+  "author": "Gianluca Guarini <gianluca.guarini@gmail.com> (http://gianlucaguarini.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/riot/create-riot/issues"
+  },
+  "homepage": "https://github.com/riot/create-riot#readme"
+}
