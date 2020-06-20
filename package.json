@@ -7,6 +7,9 @@
   "dependencies": {
     "esm": "^3.2.25"
   },
+  "bin": {
+    "create-riot": "index.js"
+  },
   "files": [
     "src",
     "index.js"
