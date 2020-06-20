@@ -1,5 +1,5 @@
 import { COMPONENT_PROJECT_KEY, CUSTOM_PROJECT_KEY, PARCEL_PROJECT_KEY, ROLLUP_PROJECT_KEY, WEBPACK_PROJECT_KEY } from './constants'
-import { isValidUrl } from './utils'
+import { validateEmptyString, validateWrongUrl } from './utils'
 import { prompt } from 'enquirer'
 
 // exit in case of prompt cancel event
@@ -20,7 +20,7 @@ export const askProjectTemplate = () => prompt({
     { message: 'Parcel Template', name: PARCEL_PROJECT_KEY },
     { message: 'Custom Template (You will need to provide a template path to your template zip file)', name: CUSTOM_PROJECT_KEY }
   ],
-  validate: value => value.length ? true : 'Your project template can not be empty'
+  validate: validateEmptyString('Your project template can not be empty')
 })
 
 /**
@@ -31,7 +31,7 @@ export const askCustomTemplatePath = () => prompt({
   type: 'text',
   name: 'templateZipURL',
   message: 'What\'s the path to your custom template zip file?',
-  validate: value => isValidUrl(value) ? true : 'Please provide a valid url to your template zip file'
+  validate: validateWrongUrl('Please provide a valid url to your template zip file')
 })
 
 

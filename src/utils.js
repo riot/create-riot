@@ -14,6 +14,10 @@ import through from 'through2'
 
 const removeFile = promisify(unlink)
 
+// validators for the prompts
+export const validateEmptyString = message => value => value.length ? true : message
+export const validateWrongUrl = message => value => isValidUrl(value) ? true : message
+
 /**
  * Terminate the process with a critical error
  * @param  {string} message - error message

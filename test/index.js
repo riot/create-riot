@@ -1,4 +1,14 @@
-import { deleteFile, deleteFolder, downloadFile, getTemplateZipPathByTemplateType, isValidUrl, transformFiles, unzip } from '../src/utils'
+import {
+  deleteFile,
+  deleteFolder,
+  downloadFile,
+  getTemplateZipPathByTemplateType,
+  isValidUrl,
+  transformFiles,
+  unzip,
+  validateEmptyString,
+  validateWrongUrl
+} from '../src/utils'
 import copy from 'recursive-copy'
 import { expect } from 'chai'
 import { join } from 'path'
@@ -51,6 +61,14 @@ describe('Riot.js Create tests', () => {
       expect(require(join(TMP_FOLDER)).message).to.be.equal('hello dear')
       expect(require(join(TMP_FOLDER, 'package.json')).name).to.be.equal('dear')
       expect(require(join(TMP_FOLDER, 'package.json')).dependencies).to.be.ok
+    })
+
+    it('prompt validators work properly', () => {
+      expect(validateEmptyString('no empty strings')('')).to.be.a('string')
+      expect(validateWrongUrl('no wrong urls')('foo')).to.be.a('string')
+
+      expect(validateEmptyString('no empty strings')('hello')).to.be.ok
+      expect(validateWrongUrl('no wrong urls')('http://google.com')).to.be.ok
     })
   })
 })
