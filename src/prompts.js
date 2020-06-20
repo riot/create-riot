@@ -20,6 +20,7 @@ export const askProjectTemplate = () => prompt({
     { message: 'Parcel Template', name: PARCEL_PROJECT_KEY },
     { message: 'Custom Template (You will need to provide a template path to your template zip file)', name: CUSTOM_PROJECT_KEY }
   ],
+  /* istanbul ignore next */
   validate: value => value.length ? true : 'Your project template can not be empty'
 })
 
@@ -31,6 +32,7 @@ export const askCustomTemplatePath = () => prompt({
   type: 'text',
   name: 'templateZipURL',
   message: 'What\'s the path to your custom template zip file?',
+  /* istanbul ignore next */
   validate: value => isValidUrl(value) ? true : 'Please provide a valid url to your template zip file'
 })
 
