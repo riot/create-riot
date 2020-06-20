@@ -30,24 +30,24 @@ export default async function main() {
 
   // get the template to use and download it
   const { templateZipURL } = await getTemplateInfo()
-  info.spinner = ora('Downloading the template').start()
+  info.spinner = ora('Downloading the template files').start()
   const zipPath = await downloadFile(templateZipURL, tmpDir)
   info.spinner.succeed()
 
   // extract the template contents
-  info.spinner = ora(`Unzipping the "${zipPath}" file`).start()
+  info.spinner = ora('Unzipping the file downloaded').start()
   await unzip(zipPath, { dir: tmpDir })
   info.spinner.succeed()
 
   // delete the zip file
-  info.spinner = ora(`Deleting the "${zipPath}" file`).start()
+  info.spinner = ora('Deleting the zip file').start()
   await deleteFile(zipPath)
   info.spinner.succeed()
 
   // copy and transform the files
   const [projectTemplateRootFolder] = readdirSync(tmpDir)
   const sourceFilesFolder = join(tmpDir, projectTemplateRootFolder)
-  info.spinner = ora(`Copying the template files from "${sourceFilesFolder}" into your project`).start()
+  info.spinner = ora('Copying the template files into your project').start()
   await copy(sourceFilesFolder, currentFolder, {
     overwrite: true,
     dot: true,
@@ -56,7 +56,7 @@ export default async function main() {
   })
   info.spinner.succeed()
 
-  info.spinner = ora(`Deleting the temporary "${tmpDir}" folder`).start()
+  info.spinner = ora('Deleting the temporary folder').start()
   await deleteFolder(tmpDir)
   info.spinner.succeed()
 
