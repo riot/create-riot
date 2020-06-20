@@ -1,16 +1,16 @@
 import { CUSTOM_PROJECT_KEY, TMP_DIR } from './constants'
 import { askCustomTemplatePath, askProjectTemplate } from './prompts'
-import { downloadFile, getTemplateZipPathByTemplateType } from './utils'
-import { merge, template } from 'lodash/fp'
+import { deleteFile, deleteFolder, downloadFile, getTemplateZipPathByTemplateType, unzip } from './utils'
 import copy from 'recursive-copy'
 import execa from 'execa'
-import extractZip from 'extract-zip'
-import fcf from 'fcf'
 import { getPackageManager } from 'pkg-install'
 import { join } from 'path'
+import { merge } from 'lodash-es'
 import mkdirp from 'mkdirp'
+import ora from 'ora'
+import { readdirSync } from 'fs'
+import { render } from 'ejs'
 import through from 'through2'
-import { unlinkSync } from 'fs'
 
 /**
  * Run `npm init` in the current directory
@@ -31,18 +31,21 @@ export const initPackage = pkgManager => {
  * Get the template info depending on the user feedback
  * @return {Promise<Object>} an object containing the "templateZipURL" property
  */
-export const getTemplateInfo = async() => fcf
-  .if(({ templateType }) => templateType === CUSTOM_PROJECT_KEY)
-  .then(async({ templateType }) => ({
-    ...(await askCustomTemplatePath()),
-    templateType
-  }))
-  .else(({ templateType }) => ({
+export const getTemplateInfo = async() => {
+  const { templateType } = await askProjectTemplate()
+
+  if (templateType === CUSTOM_PROJECT_KEY) {
+    return ({
+      ...(await askCustomTemplatePath()),
+      templateType
+    })
+  }
+
+  return {
     templateZipURL: getTemplateZipPathByTemplateType(templateType),
     templateType
-  }))
-  .run(await askProjectTemplate())
-  .value
+  }
+}
 
 /**
  * Transform the files template files interpolating the package.json values to their content
@@ -53,28 +56,21 @@ export const transformFiles = pkg => src => {
   return through((chunk, enc, done) => {
     const originalFileContent = chunk.toString()
 
-    fcf
-      // if it's a package.json file we merge it with the one just created
-      .if(path => path.includes('package.json'))
-      .then(() => {
-        const templatePackage = JSON.parse(originalFileContent)
-
-        done(null, JSON.stringify(merge(pkg, templatePackage)))
-      })
+    // if it's a package.json file we merge it with the one just created
+    if (src.includes('package.json')) {
+      done(null, JSON.stringify(merge(pkg, JSON.parse(originalFileContent))))
+    } else {
       // otherwise we interpolate the file content with the package values
-      .else(() => {
-        try {
-          const fileContent = template(originalFileContent)(pkg)
+      try {
+        const fileContent = render(originalFileContent, pkg)
 
-          done(null, fileContent)
+        done(null, fileContent)
+      } catch(error) {
+        console.error('It was not possible to interpolate the values in', src)
 
-        } catch(error) {
-          console.error(error)
-
-          done(null, originalFileContent)
-        }
-      })
-      .run(src)
+        done(null, originalFileContent)
+      }
+    }
   })
 }
 
@@ -86,21 +82,35 @@ export default async function main() {
   await mkdirp(tmpDir)
 
   // trigger npm init
-  await initPackage(await getPackageManager())
+  await initPackage(await getPackageManager({
+    prefer: 'npm'
+  }))
 
   // get the template to use and download it
   const { templateZipURL } = await getTemplateInfo()
+  const spinner = ora('Downloading the template').start()
   const zipPath = await downloadFile(templateZipURL, tmpDir)
 
   // extract the template contents
-  await extractZip(zipPath, { dir: tmpDir })
+  spinner.text = `Unzipping the "${zipPath}" file`
+  await unzip(zipPath, { dir: tmpDir })
+
   // delete the zip file
-  unlinkSync(zipPath)
+  spinner.text = `Deleting the "${zipPath}" file`
+  await deleteFile(zipPath)
 
   // copy and transform the files
-  await copy(tmpDir, currentFolder, {
+  const [projectTemplateRootFolder] = readdirSync(tmpDir)
+  const sourceFilesFolder = join(tmpDir, projectTemplateRootFolder)
+  spinner.text = `Copying the template files from "${sourceFilesFolder}" into your project`
+  await copy(sourceFilesFolder, currentFolder, {
+    overwrite: true,
+    dot: true,
+    junk: false,
     transform: transformFiles(require(join(currentFolder, 'package.json')))
   })
 
-  unlinkSync(tmpDir)
+  spinner.text = `Deleting the temporary "${tmpDir}" folder`
+  await deleteFolder(tmpDir)
+  spinner.stop()
 }

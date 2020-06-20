@@ -28,7 +28,7 @@ export const askCustomTemplatePath = () => prompts({
   type: 'text',
   name: 'templateZipURL',
   message: 'What\'s the path to your custom template zip file?',
-  validate: value => isValidUrl(value) ? value : 'Please provide a valid url to your template zip file'
+  validate: value => isValidUrl(value) ? true : 'Please provide a valid url to your template zip file'
 })
 
 
