@@ -17,6 +17,7 @@ import { readdirSync } from 'fs'
 
 export default async function main() {
   const currentFolder = process.cwd()
+  const info = {}
 
   // create a temporary folder
   const tmpDir = join(currentFolder, TMP_DIR)
@@ -29,29 +30,35 @@ export default async function main() {
 
   // get the template to use and download it
   const { templateZipURL } = await getTemplateInfo()
-  const spinner = ora('Downloading the template').start()
+  info.spinner = ora('Downloading the template').start()
   const zipPath = await downloadFile(templateZipURL, tmpDir)
+  info.spinner.succeed()
 
   // extract the template contents
-  spinner.text = `Unzipping the "${zipPath}" file`
+  info.spinner = ora(`Unzipping the "${zipPath}" file`).start()
   await unzip(zipPath, { dir: tmpDir })
+  info.spinner.succeed()
 
   // delete the zip file
-  spinner.text = `Deleting the "${zipPath}" file`
+  info.spinner = ora(`Deleting the "${zipPath}" file`).start()
   await deleteFile(zipPath)
+  info.spinner.succeed()
 
   // copy and transform the files
   const [projectTemplateRootFolder] = readdirSync(tmpDir)
   const sourceFilesFolder = join(tmpDir, projectTemplateRootFolder)
-  spinner.text = `Copying the template files from "${sourceFilesFolder}" into your project`
+  info.spinner = ora(`Copying the template files from "${sourceFilesFolder}" into your project`).start()
   await copy(sourceFilesFolder, currentFolder, {
     overwrite: true,
     dot: true,
     junk: false,
     transform: transformFiles(require(join(currentFolder, 'package.json')))
   })
+  info.spinner.succeed()
 
-  spinner.text = `Deleting the temporary "${tmpDir}" folder`
+  info.spinner = ora(`Deleting the temporary "${tmpDir}" folder`).start()
   await deleteFolder(tmpDir)
-  spinner.stop()
+  info.spinner.succeed()
+
+  ora('Template successfully created!').succeed()
 }
