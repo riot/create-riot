@@ -8,4 +8,4 @@ const createRiotAPI = require('./src/index.js')
 if (module.parent) {
   module.exports = createRiotAPI
 /* istanbul ignore next */
-} else createRiotAPI.default(process.argv)
+} else createRiotAPI.default()

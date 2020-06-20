@@ -5,7 +5,17 @@
   "main": "index.js",
   "module": "src/index.js",
   "dependencies": {
-    "esm": "^3.2.25"
+    "esm": "^3.2.25",
+    "execa": "^4.0.2",
+    "extract-zip": "^2.0.1",
+    "fcf": "^0.1.0",
+    "lodash": "^4.17.15",
+    "mkdirp": "^1.0.4",
+    "pkg-install": "^1.0.0",
+    "prompts": "^2.3.2",
+    "recursive-copy": "^2.0.10",
+    "request-promise-native": "^1.0.8",
+    "through2": "^3.0.1"
   },
   "bin": {
     "create-riot": "index.js"
