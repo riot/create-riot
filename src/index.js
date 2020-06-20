@@ -1,6 +1,6 @@
 import { CUSTOM_PROJECT_KEY, TMP_DIR } from './constants'
 import { askCustomTemplatePath, askProjectTemplate } from './prompts'
-import { downloadFile, getTemplatePathByTemplateType } from './utils'
+import { downloadFile, getTemplateZipPathByTemplateType } from './utils'
 import { merge, template } from 'lodash/fp'
 import copy from 'recursive-copy'
 import execa from 'execa'
@@ -38,7 +38,7 @@ export const getTemplateInfo = async() => fcf
     templateType
   }))
   .else(({ templateType }) => ({
-    templateZipURL: getTemplatePathByTemplateType(templateType),
+    templateZipURL: getTemplateZipPathByTemplateType(templateType),
     templateType
   }))
   .run(await askProjectTemplate())
