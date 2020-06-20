@@ -1,10 +1,16 @@
-import { basename, join } from 'path'
+import { askCustomTemplatePath, askProjectTemplate } from './prompts'
 import { unlink, writeFileSync } from 'fs'
+import { CUSTOM_PROJECT_KEY } from './constants'
 import { URL } from 'url'
+import execa from 'execa'
 import extractZip from 'extract-zip'
+import { join } from 'path'
+import { merge } from 'lodash-es'
 import { promisify } from 'util'
+import { render } from 'ejs'
 import request from 'request-promise-native'
 import rimraf from 'rimraf'
+import through from 'through2'
 
 const removeFile = promisify(unlink)
 
@@ -14,6 +20,7 @@ const removeFile = promisify(unlink)
  * @param  {Error} error - error object
  * @return {undefined}
  */
+/* istanbul ignore next */
 export function panic(message, error) {
   console.log('\n')
   console.error(message)
@@ -56,7 +63,7 @@ export const isValidUrl = url => {
  * @return {Promise<string>} path to the local file
  */
 export async function downloadFile(remoteFileUrl, destinationFolder) {
-  const fileName = basename(remoteFileUrl) || 'template.zip'
+  const fileName = 'template.zip'
   const destinationFile = join(destinationFolder, fileName)
 
   try {
@@ -69,6 +76,7 @@ export async function downloadFile(remoteFileUrl, destinationFolder) {
 
     writeFileSync(destinationFile, body)
   } catch(error) {
+    /* istanbul ignore next */
     panic('It was not possible to download the template zip file', error)
   }
 
@@ -85,6 +93,7 @@ export function deleteFolder(path) {
     try {
       rimraf(path, {}, resolve)
     } catch (error) {
+      /* istanbul ignore next */
       panic(`It was not possible to delete the "${path}" folder`, error)
     }
   })
@@ -99,8 +108,35 @@ export function deleteFile(path) {
   try {
     return removeFile(path)
   } catch (error) {
+    /* istanbul ignore next */
     panic(`It was not possible to delete the "${path}" file`, error)
   }
+}
+
+/**
+ * Transform the files template files interpolating the package.json values to their content
+ * @param  {Object} pkg - package.json content
+ * @return {Function} - function returning a through stream
+ */
+export const transformFiles = pkg => src => {
+  return through((chunk, enc, done) => {
+    const originalFileContent = chunk.toString()
+
+    // if it's a package.json file we merge it with the one just created
+    if (src.includes('package.json')) {
+      done(null, JSON.stringify(merge(pkg, JSON.parse(originalFileContent))))
+    } else {
+      // otherwise we interpolate the file content with the package values
+      try {
+        const fileContent = render(originalFileContent, pkg)
+
+        done(null, fileContent)
+      } catch(error) {
+        console.error('It was not possible to interpolate the values in', src)
+        done(null, originalFileContent)
+      }
+    }
+  })
 }
 
 /**
@@ -113,6 +149,44 @@ export function unzip(path, options) {
   try {
     return extractZip(path, options)
   } catch(error) {
+    /* istanbul ignore next */
     panic(`It was not possible to unzip the "${path}" file`, error)
+  }
+}
+
+/**
+ * Run `npm init` in the current directory
+ * @param  {string} pkgManager - npm or yarn
+ * @return {ChildProcess} - child process instance
+ */
+/* istanbul ignore next */
+export const initPackage = pkgManager => {
+  const args = process.argv
+    .slice(2)
+    .filter((arg) => arg.startsWith('-'))
+
+  return execa(pkgManager, ['init', ...args], {
+    stdio: 'inherit'
+  })
+}
+
+/**
+ * Get the template info depending on the user feedback
+ * @return {Promise<Object>} an object containing the "templateZipURL" property
+ */
+/* istanbul ignore next */
+export const getTemplateInfo = async() => {
+  const { templateType } = await askProjectTemplate()
+
+  if (templateType === CUSTOM_PROJECT_KEY) {
+    return ({
+      ...(await askCustomTemplatePath()),
+      templateType
+    })
+  }
+
+  return {
+    templateZipURL: getTemplateZipPathByTemplateType(templateType),
+    templateType
   }
 }
