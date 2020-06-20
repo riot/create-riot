@@ -1,6 +1,15 @@
 # create-riot
 Riot.js Components and Projects scaffolder
 
+# Usage
+
+Run the following command to create a new Riot.js project starting from an official template
+```
+npm init riot
+```
+
+🚧 This Project is not yet released please come back soon
+
 [![Build Status][travis-image]][travis-url]
 [![Code Quality][codeclimate-image]][codeclimate-url]
 [![NPM version][npm-version-image]][npm-url]
