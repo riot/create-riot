@@ -17,13 +17,13 @@ const removeFile = promisify(unlink)
 export function panic(message, error) {
   console.log('\n')
   console.error(message)
-  console.log('Error details:')
 
   // exit with 1 after the error dispatching
   setImmediate(() => {
     process.exit(1)
   })
 
+  console.log('Error details:\n')
   throw new Error(error)
 }
 

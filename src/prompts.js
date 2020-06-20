@@ -1,21 +1,24 @@
 import { COMPONENT_PROJECT_KEY, CUSTOM_PROJECT_KEY, PARCEL_PROJECT_KEY, ROLLUP_PROJECT_KEY, WEBPACK_PROJECT_KEY } from './constants'
 import { isValidUrl } from './utils'
-import prompts from 'prompts'
+import { prompt } from 'enquirer'
+
+// exit in case of prompt cancel event
+prompt.on('cancel', () => process.exit(1))
 
 /**
  * Ask for the project template we want to use
  * @return {Promise<Object>} object containing the "templateType" we have selected
  */
-export const askProjectTemplate = () => prompts({
+export const askProjectTemplate = () => prompt({
   type: 'select',
   name: 'templateType',
   message: 'Please select a template',
   choices: [
-    { title: 'Simple Component', value: COMPONENT_PROJECT_KEY },
-    { title: 'Webpack Template', value: WEBPACK_PROJECT_KEY },
-    { title: 'Rollup Template', value: ROLLUP_PROJECT_KEY },
-    { title: 'Parcel Template', value: PARCEL_PROJECT_KEY },
-    { title: 'Custom Template (You will need to provide a template path to your template zip file)', value: CUSTOM_PROJECT_KEY }
+    { message: 'Simple Component', name: COMPONENT_PROJECT_KEY },
+    { message: 'Webpack Template', name: WEBPACK_PROJECT_KEY },
+    { message: 'Rollup Template', name: ROLLUP_PROJECT_KEY },
+    { message: 'Parcel Template', name: PARCEL_PROJECT_KEY },
+    { message: 'Custom Template (You will need to provide a template path to your template zip file)', name: CUSTOM_PROJECT_KEY }
   ],
   validate: value => value.length ? true : 'Your project template can not be empty'
 })
@@ -24,7 +27,7 @@ export const askProjectTemplate = () => prompts({
  * Selecting a custom template we will need to provide the url where we will download the zip file
  * @return {Promise<Object>} object containing the "templateZipURL" key
  */
-export const askCustomTemplatePath = () => prompts({
+export const askCustomTemplatePath = () => prompt({
   type: 'text',
   name: 'templateZipURL',
   message: 'What\'s the path to your custom template zip file?',
