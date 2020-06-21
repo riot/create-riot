@@ -1,4 +1,4 @@
-import { COMPONENT_PROJECT_KEY, CUSTOM_PROJECT_KEY, PARCEL_PROJECT_KEY, ROLLUP_PROJECT_KEY, WEBPACK_PROJECT_KEY } from './constants'
+import { COMPONENT_PROJECT_KEY, CUSTOM_PROJECT_KEY, PARCEL_PROJECT_KEY, ROLLUP_PROJECT_KEY, SPA_WEBPACK_PROJECT_KEY, WEBPACK_PROJECT_KEY } from './constants'
 import { validateEmptyString, validateWrongUrl } from './utils'
 import { prompt } from 'enquirer'
 
@@ -14,10 +14,11 @@ export const askProjectTemplate = () => prompt({
   name: 'templateType',
   message: 'Please select a template',
   choices: [
+    { message: 'Webpack Project Template', name: WEBPACK_PROJECT_KEY },
+    { message: 'Parcel Project Template', name: PARCEL_PROJECT_KEY },
+    { message: 'Rollup Project Template', name: ROLLUP_PROJECT_KEY },
     { message: 'Simple Component', name: COMPONENT_PROJECT_KEY },
-    { message: 'Webpack Template', name: WEBPACK_PROJECT_KEY },
-    { message: 'Rollup Template', name: ROLLUP_PROJECT_KEY },
-    { message: 'Parcel Template', name: PARCEL_PROJECT_KEY },
+    { message: 'SPA (Webpack) Project Template', name: SPA_WEBPACK_PROJECT_KEY },
     { message: 'Custom Template (You will need to provide a template path to your template zip file)', name: CUSTOM_PROJECT_KEY }
   ],
   validate: validateEmptyString('Your project template can not be empty')

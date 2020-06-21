@@ -9,15 +9,92 @@ import {
 } from './utils'
 import { TMP_DIR } from './constants'
 import copy from 'recursive-copy'
+import { first } from 'lodash'
 import { getPackageManager } from 'pkg-install'
 import { join } from 'path'
 import mkdirp from 'mkdirp'
 import ora from 'ora'
 import { readdirSync } from 'fs'
 
+/**
+ * Download the template project
+ * @param  {string} tmpDir - path where the zip file will be downloaded
+ * @return {Promise<string>} path to the zip file
+ */
+async function download(tmpDir) {
+  const { templateZipURL } = await getTemplateInfo()
+  const spinner = ora('Downloading the template files').start()
+  const zipPath = await downloadFile(templateZipURL, tmpDir)
+
+  spinner.succeed()
+
+  return zipPath
+}
+
+/**
+ * Extract the zip file contents
+ * @param  {string} zipPath - path to the zip file
+ * @param  {string} tmpDir - temporary folder path
+ * @return {Promise<undefined>} IO() operation
+ */
+async function extract(zipPath, tmpDir) {
+  const spinner = ora('Unzipping the file downloaded').start()
+
+  await unzip(zipPath, { dir: tmpDir })
+
+  spinner.succeed()
+}
+
+/**
+ * Copy and transform the files of the template downloaded
+ * @param  {string} currentFolder - path where the files will be copied
+ * @param  {string} tmpDir - temporary folder path
+ * @return {Promise<undefined>} IO() operation
+ */
+async function transform(currentFolder, tmpDir) {
+  const templateFolders = readdirSync(tmpDir)
+  // github unzipped files create only a single folder so we flatten it
+  const projectTemplateRootFolder = templateFolders.length > 1 ? tmpDir : first(templateFolders)
+  const sourceFilesFolder = join(tmpDir, projectTemplateRootFolder)
+  const spinner = ora('Copying the template files into your project').start()
+
+  await copy(sourceFilesFolder, currentFolder, {
+    overwrite: true,
+    dot: true,
+    junk: false,
+    transform: transformFiles(require(join(currentFolder, 'package.json')))
+  })
+
+  spinner.succeed()
+}
+
+/**
+ * Delete the zip file
+ * @param  {string} zipPath - path to the zip file
+ * @return {Promise<undefined>} IO() operation
+ */
+async function deleteZip(zipPath) {
+  const spinner = ora('Deleting the zip file').start()
+
+  await deleteFile(zipPath)
+  spinner.succeed()
+}
+
+/**
+ * Delete the temporary folder created to parse the template files
+ * @param  {string} tmpDir - temporary folder path
+ * @return {Promise<undefined>} IO() operation
+ */
+async function deleteTmpDir(tmpDir) {
+  const spinner = ora('Deleting the temporary folder').start()
+
+  await deleteFolder(tmpDir)
+
+  spinner.succeed()
+}
+
 export default async function main() {
   const currentFolder = process.cwd()
-  const info = {}
 
   // create a temporary folder
   const tmpDir = join(currentFolder, TMP_DIR)
@@ -29,36 +106,19 @@ export default async function main() {
   }))
 
   // get the template to use and download it
-  const { templateZipURL } = await getTemplateInfo()
-  info.spinner = ora('Downloading the template files').start()
-  const zipPath = await downloadFile(templateZipURL, tmpDir)
-  info.spinner.succeed()
+  const zipPath = await download(tmpDir)
 
   // extract the template contents
-  info.spinner = ora('Unzipping the file downloaded').start()
-  await unzip(zipPath, { dir: tmpDir })
-  info.spinner.succeed()
+  await extract(zipPath, tmpDir)
 
   // delete the zip file
-  info.spinner = ora('Deleting the zip file').start()
-  await deleteFile(zipPath)
-  info.spinner.succeed()
+  await deleteZip(zipPath)
 
   // copy and transform the files
-  const [projectTemplateRootFolder] = readdirSync(tmpDir)
-  const sourceFilesFolder = join(tmpDir, projectTemplateRootFolder)
-  info.spinner = ora('Copying the template files into your project').start()
-  await copy(sourceFilesFolder, currentFolder, {
-    overwrite: true,
-    dot: true,
-    junk: false,
-    transform: transformFiles(require(join(currentFolder, 'package.json')))
-  })
-  info.spinner.succeed()
+  await transform(currentFolder, tmpDir)
 
-  info.spinner = ora('Deleting the temporary folder').start()
-  await deleteFolder(tmpDir)
-  info.spinner.succeed()
+  // remove the tmp dir
+  await deleteTmpDir(tmpDir)
 
   ora('Template successfully created!').succeed()
 }
