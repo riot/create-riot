@@ -15,6 +15,7 @@
     "ora": "^4.0.4",
     "pkg-install": "^1.0.0",
     "recursive-copy": "^2.0.10",
+    "request": "^2.88.2",
     "request-promise-native": "^1.0.8",
     "through2": "^3.0.1"
   },
