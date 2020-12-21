@@ -44,7 +44,7 @@ export function panic(message, error) {
  * @param  {string} type - template type id
  * @return {string} path to the template zip file to download
  */
-export const getTemplateZipPathByTemplateType = type => `https://github.com/riot/${type}-template/archive/master.zip`
+export const getTemplateZipPathByTemplateType = type => `https://github.com/riot/${type}-template/archive/main.zip`
 
 /**
  * Check if the url passed is valid
