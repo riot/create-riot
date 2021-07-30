@@ -8,15 +8,15 @@ Run the following command to create a new Riot.js project starting from an offic
 npm init riot
 ```
 
-[![Build Status][travis-image]][travis-url]
+[![Build Status][ci-image]][ci-url]
 [![Code Quality][codeclimate-image]][codeclimate-url]
 [![NPM version][npm-version-image]][npm-url]
 [![NPM downloads][npm-downloads-image]][npm-url]
 [![MIT License][license-image]][license-url]
 [![Coverage Status][coverage-image]][coverage-url]
 
-[travis-image]:https://img.shields.io/travis/riot/create-riot.svg?style=flat-square
-[travis-url]:https://travis-ci.org/riot/create-riot
+[ci-image]:https://img.shields.io/github/workflow/status/riot/create-riot/test?style=flat-square
+[ci-url]:https://github.com/riot/create-riot/actions
 
 [license-image]:http://img.shields.io/badge/license-MIT-000000.svg?style=flat-square
 [license-url]:LICENSE
