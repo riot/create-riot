@@ -40,14 +40,14 @@ describe('Riot.js Create tests', () => {
     it('it can download, unzip and delete a file', async function() {
       this.timeout(60000) // the download could take much time
 
-      const zipFile = await downloadFile('https://github.com/riot/riot/archive/master.zip', TMP_FOLDER)
+      const zipFile = await downloadFile('https://github.com/riot/riot/archive/main.zip', TMP_FOLDER)
 
       expect(statSync(zipFile)).to.be.ok
 
       await unzip(zipFile, { dir: TMP_FOLDER })
       await deleteFile(zipFile)
 
-      expect(statSync(join(TMP_FOLDER, 'riot-master'))).to.be.ok
+      expect(statSync(join(TMP_FOLDER, 'riot-main'))).to.be.ok
       expect(() => statSync(zipFile)).to.throw()
     })
 
