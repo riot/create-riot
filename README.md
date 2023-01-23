@@ -15,7 +15,7 @@ npm init riot
 [![MIT License][license-image]][license-url]
 [![Coverage Status][coverage-image]][coverage-url]
 
-[ci-image]:https://img.shields.io/github/workflow/status/riot/create-riot/test?style=flat-square
+[ci-image]:https://img.shields.io/github/actions/workflow/status/riot/create-riot/test.yml?style=flat-square
 [ci-url]:https://github.com/riot/create-riot/actions
 
 [license-image]:http://img.shields.io/badge/license-MIT-000000.svg?style=flat-square
