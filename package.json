@@ -16,7 +16,8 @@
     "recursive-copy": "^2.0.14",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.8",
-    "through2": "^4.0.2"
+    "through2": "^4.0.2",
+    "@npmcli/promise-spawn": "^7.0.2"
   },
   "bin": {
     "create-riot": "index.js"
@@ -26,7 +27,6 @@
     "index.js"
   ],
   "devDependencies": {
-    "@npmcli/promise-spawn": "^7.0.2",
     "@riotjs/prettier-config": "^1.1.0",
     "c8": "^9.1.0",
     "chai": "^5.1.1",
