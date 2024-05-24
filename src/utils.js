@@ -1,16 +1,16 @@
 import { askCustomTemplatePath, askProjectTemplate } from './prompts.js'
-import { unlink, writeFileSync } from 'fs'
+import { unlink, writeFileSync } from 'node:fs'
 import { CUSTOM_PROJECT_KEY } from './constants.js'
 import { URL } from 'url'
-import execa from 'execa'
 import extractZip from 'extract-zip'
-import { join } from 'path'
+import { join } from 'node:path'
 import { merge } from 'lodash-es'
 import { promisify } from 'util'
 import { render } from 'ejs'
 import request from 'request-promise-native'
 import rimraf from 'rimraf'
 import through from 'through2'
+import spawn from '@npmcli/promise-spawn'
 
 const removeFile = promisify(unlink)
 
@@ -169,7 +169,7 @@ export function unzip(path, options) {
 export const initPackage = (pkgManager) => {
   const args = process.argv.slice(2).filter((arg) => arg.startsWith('-'))
 
-  return execa(pkgManager, ['init', ...args], {
+  return spawn(pkgManager, ['init', ...args], {
     stdio: 'inherit',
   })
 }

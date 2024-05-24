@@ -12,9 +12,12 @@ import copy from 'recursive-copy'
 import { first } from 'lodash-es'
 import { getPackageManager } from 'pkg-install'
 import { join } from 'path'
-import mkdirp from 'mkdirp'
+import { mkdirp } from 'mkdirp'
 import ora from 'ora'
-import { readdirSync } from 'fs'
+import { readdirSync } from 'node:fs'
+import Module from 'node:module'
+
+const require = Module.createRequire(import.meta.url)
 
 /**
  * Download the template project

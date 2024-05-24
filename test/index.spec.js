@@ -12,7 +12,7 @@ import {
 import copy from 'recursive-copy'
 import { expect } from 'chai'
 import { join } from 'path'
-import mkdirp from 'mkdirp'
+import { mkdirp } from 'mkdirp'
 import { statSync } from 'fs'
 import Module from 'node:module'
 
