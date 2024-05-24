@@ -1,6 +1,6 @@
 {
   "name": "create-riot",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "Riot.js Components and Projects scaffolder",
   "main": "src/index.js",
   "module": "src/index.js",
