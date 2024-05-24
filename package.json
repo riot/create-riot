@@ -40,7 +40,7 @@
     "cov": "nyc report --reporter=lcov",
     "cov-html": "nyc report --reporter=html",
     "lint": "eslint src test",
-    "beforePublishOnly": "npm run lint && npm test",
+    "prepublishOnly": "npm run lint && npm test",
     "test": "c8 mocha test/index.spec.js"
   },
   "repository": {
