@@ -2,15 +2,15 @@
   "name": "create-riot",
   "version": "2.0.1",
   "description": "Riot.js Components and Projects scaffolder",
-  "main": "index.js",
+  "main": "src/index.js",
   "module": "src/index.js",
+  "type": "module",
   "dependencies": {
     "ejs": "^3.1.6",
     "enquirer": "^2.3.6",
-    "esm": "^3.2.25",
     "execa": "^5.1.1",
     "extract-zip": "^2.0.1",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "mkdirp": "^1.0.4",
     "ora": "^5.4.1",
     "pkg-install": "^1.0.0",
@@ -27,18 +27,21 @@
     "index.js"
   ],
   "devDependencies": {
+    "@riotjs/prettier-config": "^1.1.0",
+    "c8": "^9.1.0",
     "chai": "^4.3.4",
     "coveralls": "^3.1.1",
-    "eslint": "^7.31.0",
-    "eslint-config-riot": "^3.0.0",
+    "eslint": "^8.57.0",
+    "eslint-config-riot": "^4.1.2",
     "mocha": "^8.4.0",
-    "nyc": "^15.1.0"
+    "prettier": "^3.2.5"
   },
   "scripts": {
     "cov": "nyc report --reporter=lcov",
     "cov-html": "nyc report --reporter=html",
     "lint": "eslint src test",
-    "test": "npm run lint && nyc --require esm mocha test/index.js"
+    "beforePublishOnly": "npm run lint && npm test",
+    "test": "c8 mocha test/index.spec.js"
   },
   "repository": {
     "type": "git",

@@ -5,11 +5,11 @@ import {
   getTemplateInfo,
   initPackage,
   transformFiles,
-  unzip
-} from './utils'
-import { TMP_DIR } from './constants'
+  unzip,
+} from './utils.js'
+import { TMP_DIR } from './constants.js'
 import copy from 'recursive-copy'
-import { first } from 'lodash'
+import { first } from 'lodash-es'
 import { getPackageManager } from 'pkg-install'
 import { join } from 'path'
 import mkdirp from 'mkdirp'
@@ -54,7 +54,8 @@ async function extract(zipPath, tmpDir) {
 async function transform(currentFolder, tmpDir) {
   const templateFolders = readdirSync(tmpDir)
   // github unzipped files create only a single folder so we flatten it
-  const projectTemplateRootFolder = templateFolders.length > 1 ? tmpDir : first(templateFolders)
+  const projectTemplateRootFolder =
+    templateFolders.length > 1 ? tmpDir : first(templateFolders)
   const sourceFilesFolder = join(tmpDir, projectTemplateRootFolder)
   const spinner = ora('Copying the template files into your project').start()
 
@@ -62,7 +63,7 @@ async function transform(currentFolder, tmpDir) {
     overwrite: true,
     dot: true,
     junk: false,
-    transform: transformFiles(require(join(currentFolder, 'package.json')))
+    transform: transformFiles(require(join(currentFolder, 'package.json'))),
   })
 
   spinner.succeed()
@@ -101,9 +102,11 @@ export default async function main() {
   await mkdirp(tmpDir)
 
   // trigger npm init
-  await initPackage(await getPackageManager({
-    prefer: 'npm'
-  }))
+  await initPackage(
+    await getPackageManager({
+      prefer: 'npm',
+    }),
+  )
 
   // get the template to use and download it
   const zipPath = await download(tmpDir)

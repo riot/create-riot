@@ -7,23 +7,25 @@ import {
   transformFiles,
   unzip,
   validateEmptyString,
-  validateWrongUrl
-} from '../src/utils'
+  validateWrongUrl,
+} from '../src/utils.js'
 import copy from 'recursive-copy'
 import { expect } from 'chai'
 import { join } from 'path'
 import mkdirp from 'mkdirp'
 import { statSync } from 'fs'
+import Module from 'node:module'
 
+const require = Module.createRequire(import.meta.url)
 const TMP_FOLDER = join(process.cwd(), '.tmp')
 const FIXTURES = join(process.cwd(), 'test', 'fixtures')
 
 describe('Riot.js Create tests', () => {
-  before(async() => {
+  before(async () => {
     await mkdirp(TMP_FOLDER)
   })
 
-  after(async() => {
+  after(async () => {
     await deleteFolder(TMP_FOLDER)
   })
 
@@ -37,10 +39,13 @@ describe('Riot.js Create tests', () => {
       expect(isValidUrl('google.com')).to.be.not.ok
     })
 
-    it('it can download, unzip and delete a file', async function() {
+    it('it can download, unzip and delete a file', async function () {
       this.timeout(60000) // the download could take much time
 
-      const zipFile = await downloadFile('https://github.com/riot/riot/archive/main.zip', TMP_FOLDER)
+      const zipFile = await downloadFile(
+        'https://github.com/riot/riot/archive/main.zip',
+        TMP_FOLDER,
+      )
 
       expect(statSync(zipFile)).to.be.ok
 
@@ -51,11 +56,11 @@ describe('Riot.js Create tests', () => {
       expect(() => statSync(zipFile)).to.throw()
     })
 
-    it('it can transform files properly', async() => {
+    it('it can transform files properly', async () => {
       const pkg = { name: 'dear' }
 
       await copy(join(FIXTURES, 'template'), TMP_FOLDER, {
-        transform: transformFiles(pkg)
+        transform: transformFiles(pkg),
       })
 
       expect(require(join(TMP_FOLDER)).message).to.be.equal('hello dear')

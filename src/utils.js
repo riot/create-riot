@@ -1,11 +1,11 @@
-import { askCustomTemplatePath, askProjectTemplate } from './prompts'
+import { askCustomTemplatePath, askProjectTemplate } from './prompts.js'
 import { unlink, writeFileSync } from 'fs'
-import { CUSTOM_PROJECT_KEY } from './constants'
+import { CUSTOM_PROJECT_KEY } from './constants.js'
 import { URL } from 'url'
 import execa from 'execa'
 import extractZip from 'extract-zip'
 import { join } from 'path'
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import { promisify } from 'util'
 import { render } from 'ejs'
 import request from 'request-promise-native'
@@ -15,8 +15,10 @@ import through from 'through2'
 const removeFile = promisify(unlink)
 
 // validators for the prompts
-export const validateEmptyString = message => value => value.length ? true : message
-export const validateWrongUrl = message => value => isValidUrl(value) ? true : message
+export const validateEmptyString = (message) => (value) =>
+  value.length ? true : message
+export const validateWrongUrl = (message) => (value) =>
+  isValidUrl(value) ? true : message
 
 /**
  * Terminate the process with a critical error
@@ -38,20 +40,20 @@ export function panic(message, error) {
   throw new Error(error)
 }
 
-
 /**
  * Get the template zip file path by a template type
  * @param  {string} type - template type id
  * @return {string} path to the template zip file to download
  */
-export const getTemplateZipPathByTemplateType = type => `https://github.com/riot/${type}-template/archive/main.zip`
+export const getTemplateZipPathByTemplateType = (type) =>
+  `https://github.com/riot/${type}-template/archive/main.zip`
 
 /**
  * Check if the url passed is valid
  * @param  {string} url - url to check
  * @return {boolean} true if it's a valid url
  */
-export const isValidUrl = url => {
+export const isValidUrl = (url) => {
   try {
     new URL(url)
     return true
@@ -75,11 +77,11 @@ export async function downloadFile(remoteFileUrl, destinationFolder) {
       method: 'get',
       uri: remoteFileUrl,
       encoding: null,
-      resolveWithFullResponse: true
+      resolveWithFullResponse: true,
     })
 
     writeFileSync(destinationFile, body)
-  } catch(error) {
+  } catch (error) {
     /* istanbul ignore next */
     panic('It was not possible to download the template zip file', error)
   }
@@ -122,7 +124,7 @@ export function deleteFile(path) {
  * @param  {Object} pkg - package.json content
  * @return {Function} - function returning a through stream
  */
-export const transformFiles = pkg => src => {
+export const transformFiles = (pkg) => (src) => {
   return through((chunk, enc, done) => {
     const originalFileContent = chunk.toString()
 
@@ -135,7 +137,7 @@ export const transformFiles = pkg => src => {
         const fileContent = render(originalFileContent, pkg)
 
         done(null, fileContent)
-      } catch(error) {
+      } catch (error) {
         console.error('It was not possible to interpolate the values in', src)
         done(null, originalFileContent)
       }
@@ -152,7 +154,7 @@ export const transformFiles = pkg => src => {
 export function unzip(path, options) {
   try {
     return extractZip(path, options)
-  } catch(error) {
+  } catch (error) {
     /* istanbul ignore next */
     panic(`It was not possible to unzip the "${path}" file`, error)
   }
@@ -164,13 +166,11 @@ export function unzip(path, options) {
  * @return {ChildProcess} - child process instance
  */
 /* istanbul ignore next */
-export const initPackage = pkgManager => {
-  const args = process.argv
-    .slice(2)
-    .filter((arg) => arg.startsWith('-'))
+export const initPackage = (pkgManager) => {
+  const args = process.argv.slice(2).filter((arg) => arg.startsWith('-'))
 
   return execa(pkgManager, ['init', ...args], {
-    stdio: 'inherit'
+    stdio: 'inherit',
   })
 }
 
@@ -179,18 +179,18 @@ export const initPackage = pkgManager => {
  * @return {Promise<Object>} an object containing the "templateZipURL" property
  */
 /* istanbul ignore next */
-export const getTemplateInfo = async() => {
+export const getTemplateInfo = async () => {
   const { templateType } = await askProjectTemplate()
 
   if (templateType === CUSTOM_PROJECT_KEY) {
-    return ({
+    return {
       ...(await askCustomTemplatePath()),
-      templateType
-    })
+      templateType,
+    }
   }
 
   return {
     templateZipURL: getTemplateZipPathByTemplateType(templateType),
-    templateType
+    templateType,
   }
 }

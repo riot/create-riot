@@ -1,1 +1,2 @@
-export const message = 'hello <%= name %>'
+module.exports.message = 'hello <%= name %>'
+

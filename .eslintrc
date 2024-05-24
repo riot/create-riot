@@ -1,9 +1,5 @@
 extends: eslint-config-riot
 
-parserOptions:
-  ecmaVersion: 9
-  sourceType: 'module'
-
 globals:
   sinon: true
   chai: true
