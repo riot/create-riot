@@ -1,5 +1,5 @@
 import { askCustomTemplatePath, askProjectTemplate } from './prompts.js'
-import { unlink, writeFileSync } from 'node:fs'
+import { unlink, createWriteStream } from 'node:fs'
 import { CUSTOM_PROJECT_KEY } from './constants.js'
 import { URL } from 'url'
 import extractZip from 'extract-zip'
@@ -7,10 +7,10 @@ import { join } from 'node:path'
 import { merge } from 'lodash-es'
 import { promisify } from 'util'
 import { render } from 'ejs'
-import request from 'request-promise-native'
 import rimraf from 'rimraf'
 import through from 'through2'
 import spawn from '@npmcli/promise-spawn'
+import fetch from 'node-fetch'
 
 const removeFile = promisify(unlink)
 
@@ -73,14 +73,17 @@ export async function downloadFile(remoteFileUrl, destinationFolder) {
   const destinationFile = join(destinationFolder, fileName)
 
   try {
-    const { body } = await request({
-      method: 'get',
-      uri: remoteFileUrl,
-      encoding: null,
-      resolveWithFullResponse: true,
-    })
+    const response = await fetch(remoteFileUrl)
+    if (!response.ok) {
+      throw new Error('Failed to download template zip file')
+    }
 
-    writeFileSync(destinationFile, body)
+    const dest = createWriteStream(destinationFile)
+    await new Promise((resolve, reject) => {
+      response.body.pipe(dest)
+      response.body.on('error', reject)
+      dest.on('finish', resolve)
+    })
   } catch (error) {
     /* istanbul ignore next */
     panic('It was not possible to download the template zip file', error)
