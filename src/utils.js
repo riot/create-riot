@@ -174,6 +174,7 @@ export const initPackage = (pkgManager) => {
 
   return spawn(pkgManager, ['init', ...args], {
     stdio: 'inherit',
+    shell: true,
   })
 }
 
