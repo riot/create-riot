@@ -37,8 +37,8 @@
     "prettier": "^3.6.2"
   },
   "scripts": {
-    "cov": "nyc report --reporter=lcov",
-    "cov-html": "nyc report --reporter=html",
+    "cov": "c8 report --reporter=lcov",
+    "cov-html": "c8 report --reporter=html",
     "lint": "eslint src test",
     "prepublishOnly": "npm run lint && npm test",
     "test": "c8 mocha test/index.spec.js"
