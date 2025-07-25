@@ -11,7 +11,7 @@ npm init riot
 ```
 
 [![Build Status][ci-image]][ci-url]
-[![Code Quality][codeclimate-image]][codeclimate-url]
+[![Code Quality][qlty-image]][qlty-url]
 [![NPM version][npm-version-image]][npm-url]
 [![NPM downloads][npm-downloads-image]][npm-url]
 [![MIT License][license-image]][license-url]
@@ -24,7 +24,7 @@ npm init riot
 [npm-version-image]: http://img.shields.io/npm/v/create-riot.svg?style=flat-square
 [npm-downloads-image]: http://img.shields.io/npm/dm/create-riot.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/create-riot
-[coverage-image]: https://img.shields.io/coveralls/riot/create-riot/main.svg?style=flat-square
-[coverage-url]: https://coveralls.io/r/riot/create-riot/?branch=main
-[codeclimate-image]: https://api.codeclimate.com/v1/badges/5712496768a9da5988b3/maintainability
-[codeclimate-url]: https://codeclimate.com/github/riot/create-riot
+[coverage-image]: https://qlty.sh/gh/riot/projects/create-riot/coverage.svg
+[coverage-url]: https://qlty.sh/gh/riot/projects/create-riot
+[qlty-image]: https://qlty.sh/gh/riot/projects/create-riot/maintainability.svg
+[qlty-url]: https://qlty.sh/gh/riot/projects/create-riot
