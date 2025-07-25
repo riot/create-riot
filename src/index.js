@@ -22,7 +22,7 @@ const require = Module.createRequire(import.meta.url)
 /**
  * Download the template project
  * @param  {string} tmpDir - path where the zip file will be downloaded
- * @return {Promise<string>} path to the zip file
+ * @returns {Promise<string>} path to the zip file
  */
 async function download(tmpDir) {
   const { templateZipURL } = await getTemplateInfo()
@@ -38,7 +38,7 @@ async function download(tmpDir) {
  * Extract the zip file contents
  * @param  {string} zipPath - path to the zip file
  * @param  {string} tmpDir - temporary folder path
- * @return {Promise<undefined>} IO() operation
+ * @returns {Promise<undefined>} IO() operation
  */
 async function extract(zipPath, tmpDir) {
   const spinner = ora('Unzipping the file downloaded').start()
@@ -52,7 +52,7 @@ async function extract(zipPath, tmpDir) {
  * Copy and transform the files of the template downloaded
  * @param  {string} currentFolder - path where the files will be copied
  * @param  {string} tmpDir - temporary folder path
- * @return {Promise<undefined>} IO() operation
+ * @returns {Promise<undefined>} IO() operation
  */
 async function transform(currentFolder, tmpDir) {
   const templateFolders = readdirSync(tmpDir)
@@ -75,7 +75,7 @@ async function transform(currentFolder, tmpDir) {
 /**
  * Delete the zip file
  * @param  {string} zipPath - path to the zip file
- * @return {Promise<undefined>} IO() operation
+ * @returns {Promise<undefined>} IO() operation
  */
 async function deleteZip(zipPath) {
   const spinner = ora('Deleting the zip file').start()
@@ -87,7 +87,7 @@ async function deleteZip(zipPath) {
 /**
  * Delete the temporary folder created to parse the template files
  * @param  {string} tmpDir - temporary folder path
- * @return {Promise<undefined>} IO() operation
+ * @returns {Promise<undefined>} IO() operation
  */
 async function deleteTmpDir(tmpDir) {
   const spinner = ora('Deleting the temporary folder').start()

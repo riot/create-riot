@@ -15,7 +15,7 @@ prompt.on('cancel', () => process.exit(1))
 
 /**
  * Ask for the project template we want to use
- * @return {Promise<Object>} object containing the "templateType" we have selected
+ * @returns {Promise<object>} object containing the "templateType" we have selected
  */
 export const askProjectTemplate = () =>
   prompt({
@@ -42,7 +42,7 @@ export const askProjectTemplate = () =>
 
 /**
  * Selecting a custom template we will need to provide the url where we will download the zip file
- * @return {Promise<Object>} object containing the "templateZipURL" key
+ * @returns {Promise<object>} object containing the "templateZipURL" key
  */
 export const askCustomTemplatePath = () =>
   prompt({
