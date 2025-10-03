@@ -4,6 +4,7 @@ import {
   PARCEL_PROJECT_KEY,
   ROLLUP_PROJECT_KEY,
   SPA_WEBPACK_PROJECT_KEY,
+  SPA_VITE_PROJECT_KEY,
   WEBPACK_PROJECT_KEY,
 } from './constants.js'
 import { validateEmptyString, validateWrongUrl } from './utils.js'
@@ -23,10 +24,11 @@ export const askProjectTemplate = () =>
     name: 'templateType',
     message: 'Please select a template',
     choices: [
-      { message: 'Webpack Project Template', name: WEBPACK_PROJECT_KEY },
-      { message: 'Parcel Project Template', name: PARCEL_PROJECT_KEY },
+      { message: 'SPA (Vite) Project Template', name: SPA_VITE_PROJECT_KEY },
       { message: 'Rollup Project Template', name: ROLLUP_PROJECT_KEY },
       { message: 'Simple Component', name: COMPONENT_PROJECT_KEY },
+      { message: 'Webpack Project Template', name: WEBPACK_PROJECT_KEY },
+      { message: 'Parcel Project Template', name: PARCEL_PROJECT_KEY },
       {
         message: 'SPA (Webpack) Project Template',
         name: SPA_WEBPACK_PROJECT_KEY,
